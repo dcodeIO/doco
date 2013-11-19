@@ -1,0 +1,27 @@
+{
+    "name": "doco",
+    "description": "The JavaScript Documentation Engine",
+    "version": "0.1.0",
+    "author": "Daniel Wirtz <dcode@dcode.io>",
+    "main": "./doco.js",
+    "bin": {
+        "doco": "./bin/doco"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dcodeIO/doco.git"
+    },
+    "bugs": {
+        "url": "https://github.com/dcodeIO/doco/issues"
+    },
+    "keywords": ["documentation", "utility", "javascript"],
+    "devDependencies": {},
+    "dependencies": {},
+    "license": "Apache-2.0",
+    "engines": {
+        "node": ">=0.6"
+    },
+    "scripts": {
+        "test": "node node_modules/testjs/bin/testjs"
+    }
+}
