@@ -3,6 +3,7 @@
  * Released under the Apache License, Version 2.0
  * see: http://www.dojojs.org for details
  */
+//
 module.exports = (function () {
 
     var util = require("util");
@@ -12,7 +13,7 @@ module.exports = (function () {
      * @param {string} source Source to parse
      * @param {!function(Error, doco.Context=)} callback Callback receiving the parsed and interpreted context
      */
-    var doco = function(source, callback) {
+    function doco(source, callback) {
         var parser = new doco.Parser();
         var context = new doco.Context();
         parser.on("comment", function(comment, decl) {
@@ -23,16 +24,21 @@ module.exports = (function () {
         });
         parser.write(source);
         parser.end();
-    };
+    }
 
     /**
      * Inspects an object including all its private members.
-     * @param {Object} obj Object to inspect
+     * @param {*} obj Object to inspect
      * @returns {string} Console friendly result
      */
     doco.inspect = function(obj) {
         return util.inspect(obj, true, null, true);
     };
+
+    /**
+     * @type {!Object.<string,number>} asd
+     */
+    var bleh;
 
     require("./doco/TypeDef.js")(doco);
     require("./doco/Tag.js")(doco);

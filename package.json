@@ -15,7 +15,9 @@
         "url": "https://github.com/dcodeIO/doco/issues"
     },
     "keywords": ["documentation", "utility", "javascript"],
-    "devDependencies": {},
+    "devDependencies": {
+        "testjs": "latest"
+    },
     "dependencies": {},
     "license": "Apache-2.0",
     "engines": {

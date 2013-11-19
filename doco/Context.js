@@ -51,9 +51,54 @@ module.exports = function(doco) {
         this.tags = tags;
         this.decl = decl;
     };
+
+    /**
+     * Creates an object on the namespace and returns a pointer on it.
+     * @param {string} name Name, e.g. "doco.Parser"
+     */
+    doco.Context.prototype.create = function(name) {
+        var parts = name.split(/\./),
+            pptr = this.ns,
+            ptr = pptr;
+        while (parts.length > 0) {
+            name = parts.shift();
+            if (!ptr.hasOwnProperty(name)) {
+                ptr[name] = {};
+            }
+            pptr = ptr;
+            ptr = ptr[name];
+        }
+        return {
+            "ptr": pptr, // Pointer to parent
+            "name": name // Name in namespace
+        };
+    };
     
     doco.Context.prototype.build = function() {
-        
+        var elements = this.elements.slice();
+        while (elements.length > 0) {
+            var elem = elements.shift(),
+                title = elem["title"],
+                decl = elem["decl"],
+                tags = elem["tags"];
+            
+            var names = [];
+            decl["assignments"].forEach(function(assignment) {
+                names.push(assignment["name"]);
+            });
+            if (decl["signature"] !== null && decl["signature"]["name"] !== null) {
+                names.push(decl["signature"]["name"]);
+            }
+            console.log(names);
+            if (names.length > 0) {
+                // Resolve names and, if they are new, put them into the namespace
+                names.forEach(function(name) {
+                    var ns = this.create(name);
+                    ns["ptr"][ns["name"]] = elem;
+                }.bind(this));
+            }
+        }
+        console.log(doco.inspect(this.ns));
     }
     
 };

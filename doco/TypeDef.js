@@ -378,10 +378,6 @@ module.exports = function(doco) {
         var def = null,
             maybeNull = undefined;
         while (str.length > 0) {
-            if (str.charAt(0) === '=' && isFunctionArgument && def) {
-                def.optional = true;
-                
-            }
             switch (str.charAt(0)) {
                 case '?':
                 case '!':

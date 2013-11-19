@@ -6,7 +6,7 @@ module.exports = function(doco) {
      * @const
      * @inner
      */
-    var assignmentExp = /(?:(var|let)\s)?\s*([^\s=]+)\s*=/g;
+    var assignmentExp = /^(?:(var|let)\s)?\s*([^=;\s]+)\s*(?:=|;|\s)/g;
 
     /**
      * Function signature expression.

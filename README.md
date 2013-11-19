@@ -1,18 +1,14 @@
 ![doco - The JavaScript Documentation Engine](https://raw.github.com/dcodeIO/doco/master/doco.png)
 ======================================
-doco aims to become the best tool for documenting JavaScript code, all without the hazzle of other documentation
+**doco** aims to become the ideal tool for documenting JavaScript code, all without the hazzle of other documentation
 engines.
 
 Why?
 ----
 As of today, creating documentation of JavaScript code seems to be ugly and error prone. In my opinion that's the reason
-why quick-and-dirty documentation generators like Docco are to popular. Unfortunately, documenting complicated things
-with a tool like Docco ends up in something that actually doesn't document much and is well suited for pretty simple
-and short projects only.
-
-Of course there is JSDoc, which already is a pretty professional approach, but I've made the experience that JSDoc
-is too strict in what it does because it does not just do documenting but also parsing of JavaScript that - in not too
-few cases - goes wrong. Imho writing and putting together documentation should be left to the guy with the gun.
+why quick-and-dirty documentation generators are so popular. Unfortunately, documenting complicated things
+with a just-too-simple tool ends up in something that actually doesn't document much and is well suited for pretty small
+projects only.
 
 What can doco already do?
 -------------------------
@@ -34,6 +30,10 @@ going to create generators for markdown, which may be published on GitHub or sim
 All generators will be plug and play and everyone is invited to create additional generators for stuff like PDF.
 
 Feel free to contact me if you are interested in working on the project!
+
+Until then
+----------
+* [Learn more by reading the wiki](https://github.com/dcodeIO/doco/wiki)
 
 License
 -------

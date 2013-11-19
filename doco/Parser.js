@@ -114,7 +114,7 @@ module.exports = function(doco) {
             switch (this.state) {
                 case doco.Parser.State.SCAN: // Look out for `/` + `*` + `*`
                     for (;this.offset<this.limit; this.offset++) {
-                        if (this.stack.length >= 2 && this.stack[this.stack.length-2] == 0x2F && this.stack[this.stack.length-1] == 0x2A && this.buffer[this.offset] == 0x2A) {
+                        if (this.stack.length >= 2 && this.stack[this.stack.length-2] === 0x2F && this.stack[this.stack.length-1] === 0x2A && this.buffer[this.offset] == 0x2A) {
                             this.mark = this.offset+1;
                             this.state = doco.Parser.State.INCOMMENT;
                             this.stack.length = 0;
@@ -127,7 +127,7 @@ module.exports = function(doco) {
                     break;
                 case doco.Parser.State.INCOMMENT: // Look out for `*` + `/`
                     for (;this.offset<this.limit-1; this.offset++) {
-                        if (this.stack.length >= 1 && this.stack[this.stack.length-1] == 0x2A && this.buffer[this.offset] == 0x2F) {
+                        if (this.stack.length >= 1 && this.stack[this.stack.length-1] === 0x2A && this.buffer[this.offset] === 0x2F) {
                             this._processComment(this.mark, this.offset-1);
                             this.mark = this.offset+1;
                             this.state = doco.Parser.State.AFTERCOMMENT;
@@ -139,18 +139,23 @@ module.exports = function(doco) {
                         }
                     }
                     break;
-                case doco.Parser.State.AFTERCOMMENT: // Look out for `{` or `;`
+                case doco.Parser.State.AFTERCOMMENT: // Look out for `{` or `;` and abort on '/'+'/' or '/'+'*'
                     for (;this.offset<this.limit; this.offset++) {
-                        if (this.buffer[this.offset] == 0x7B || this.buffer[this.offset] == 0x3B) {
-                            this._processDeclaration(this.mark, this.offset+1); // Include the delimiter
+                        if ((this.stack.length >= 1 && this.stack[this.stack.length-1] === 0x2F && (this.buffer[this.offset] === 0x2F || this.buffer[this.offset] === 0x2A))
+                        ||  (this.buffer[this.offset] === 0x7B || this.buffer[this.offset] === 0x3B)) {
+                            this._processDeclaration(this.mark, this.offset+1);
                             this.mark = this.offset+1;
                             this.state = doco.Parser.State.SCAN;
+                            this.stack.length = 0;
                             break;
+                        } else {
+                            while (this.stack.length > 1) this.stack.shift();
+                            this.stack.push(this.buffer[this.offset]);
                         }
                     }
                     break;
                 default:
-                    throw(new Error("We should never end here."));
+                    throw(new Error("[INTERNAL] Illegal parser state: "+this.state));
             }
         }
     };
@@ -174,7 +179,7 @@ module.exports = function(doco) {
     doco.Parser.prototype._processDeclaration = function(start, end) {
         var decl = this.buffer.toString("utf8", start, end);
         this.emit("comment",
-            this.comment.replace(/\s*[\*]+\s*/g, '\n').trim(),
+            this.comment.replace(/(?:^|\s+)\*+\s*/g, '\n').trim(),
             decl.replace(/\s+/g, ' ').trim()
         );
         this.comment = null;

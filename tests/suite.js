@@ -100,7 +100,6 @@ module.exports = {
             test.strictEqual(def['type'].optional, true);
             test.ok(def['type'] instanceof doco.FunctionType);
             test.strictEqual(def['type'].toString(), '!function(Error, ...[string]):undefined');
-            console.log(doco.inspect(def));
             test.done();
         },
         
@@ -116,7 +115,7 @@ module.exports = {
     "self": function(test) {
         var source = fs.readFileSync(path.join(__dirname, '..', 'doco.js'));
         doco(source, function(err, context) {
-            console.log(doco.inspect(context));
+            context.build();
             test.done();
         });
     }
