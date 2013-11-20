@@ -1,39 +1,44 @@
 ![doco - The JavaScript Documentation Engine](https://raw.github.com/dcodeIO/doco/master/doco.png)
 ======================================
-**doco** aims to become the ideal tool for documenting JavaScript code, all without the hazzle of other documentation
-engines.
+**doco** aims to become the ideal tool for documenting JavaScript code.
 
 Why?
 ----
-As of today, creating documentation of JavaScript code seems to be ugly and error prone. In my opinion that's the reason
-why quick-and-dirty documentation generators are so popular. Unfortunately, documenting complicated things
-with a just-too-simple tool ends up in something that actually doesn't document much and is well suited for pretty small
-projects only.
+You already know if you have ever used another documentation generator.
 
 What can doco already do?
 -------------------------
-doco already is able to parse a variety of comment types to a documentation context of well defined objects. This means
-that everything is composed of doco.Context, doco.Declaration, doco.Tag and doco.TypeDef objects which may safely be
-used to generate to-the-point documentation in all different output formats from it.
+doco already is able to parse a variety of comment types to a reflected documentation context of well defined objects.
+This means that everything is composed of doco.Declaration, doco.Tag and doco.TypeDef objects that may safely be used
+to generate to-the-point documentation in all different output formats. It understands a similar syntax as JSDoc does
+but skips some constructs that tend to make things rather messy.
 
 Additionally, it largely borrows type annotation styles from Closure Compiler. Yes, right, that Java-beast that isn't
 really keeping with the period anymore. However, its type annotation syntax is really useful and able to pinpoint
 pretty much every awkward case. To make this actually work, doco fully understands these cases and is able to untangle
-it entirely.
+them entirely. Additional benefit: It's compatible with existing code that already follows this convention to a
+reasonable degree.
 
-Plus: It implements node's stream interface for speed.
+It also implements node's stream interface which ensures interoperability, allows building middleware or just using the
+raw parser for something else. You know, documenting PHP code or something.
+
+Ideas
+-----
+* What's not documented isn't documented
+* No code analysis = no backfiring
+* Less is more
+* Y U NO MAKE A MARKDOWN GENERATOR
 
 So, what's next?
 ----------------
-I am currently putting together the parts, which are the typedef parser and the different comment types. Later on I am
-going to create generators for markdown, which may be published on GitHub or similar, and HTML for everything else.
-All generators will be plug and play and everyone is invited to create additional generators for stuff like PDF.
-
-Feel free to contact me if you are interested in working on the project!
+* Putting together the TypeDef parser and comment types
+* Resolving classes, methods and variables in a common namespace
+* Creating generators for Markdown (e.g. publish on GitHub) and HTML
 
 Until then
 ----------
 * [Learn more by reading the wiki](https://github.com/dcodeIO/doco/wiki)
+* View the sources and decide if you like what's there already
 
 License
 -------

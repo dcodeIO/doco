@@ -1,9 +1,9 @@
 {
     "name": "doco",
     "description": "The JavaScript Documentation Engine",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "author": "Daniel Wirtz <dcode@dcode.io>",
-    "main": "./doco.js",
+    "main": "./src/doco.js",
     "bin": {
         "doco": "./bin/doco"
     },
