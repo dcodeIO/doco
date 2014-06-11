@@ -15,30 +15,19 @@
  */
 
 /**
- * A Function Declaration.
- * @constructor
- * @param {?string} name Function name
- * @param {Array.<string>} parameters Function parameter names
+ * @alias doco
+ * @inner
  */
-var Function = function(name, parameters) {
-
-    /**
-     * Function name.
-     * @type {?string}
-     */
-    this.name = name;
-
-    /**
-     * Function parameter definitions to be interpreted.
-     * @type {Array.<string>}
-     */
-    this.parameters = parameters;
-};
+var doco = require("../src/doco.js");
 
 /**
- * Expression used to parse function definitions.
- * @const {!RegExp}
+ * doco JSON generator.
+ * @param {!doco.Builder} builder
+ * @returns {!Buffer} JSON
  */
-Function.EXPRESSION = /function\s*([^\s\(]+)?\s*\(([^\)]*)\)/;
+function docoJson(builder) {
+    throw(new Error("Not yet implemented."));
+}
 
-module.exports = Function;
+module.exports = docoJson;
+

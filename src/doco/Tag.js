@@ -16,6 +16,7 @@
 
 /**
  * @alias doco.TypeDef
+ * @inner
  */
 var TypeDef = require("./TypeDef.js");
 
@@ -129,34 +130,33 @@ function defineTag(clazz, name, varargs) {
 
 ////////////////////////////////////////////////////// General tags ////////////////////////////////////////////////////
 
-defineTag(Tag.TypeNameAndComment, "param");
-defineTag(Tag.TypeAndComment, "type");
-defineTag(Tag.TypeAndComment, "const");
-defineTag(Tag.TypeAndComment, "typedef");
-defineTag(Tag.TypeAndComment, "returns", "return");
-defineTag(Tag.TypeAndComment, "throws");
-defineTag(Tag.NameAndComment, "constructor");
-defineTag(Tag.NameAndComment, "function");
-defineTag(Tag.NameAndComment, "method");
-defineTag(Tag.NameAndComment, "extends");
-defineTag(Tag.NameAndComment, "augments");
-defineTag(Tag.NameAndComment, "implements");
+defineTag(Tag.TypeNameAndComment, "param");             // Function parameter
+defineTag(Tag.TypeAndComment, "type");                  // Type definition
+defineTag(Tag.TypeAndComment, "const", "constant");     // Constant type definition
+defineTag(Tag.TypeAndComment, "typedef");               // Custom type definition
+defineTag(Tag.TypeAndComment, "returns", "return");     // Return type definition
+defineTag(Tag.TypeAndComment, "throws");                // Throw type definition
+defineTag(Tag.NameAndComment, "name", "exports");       // Naming override
+defineTag(Tag.NameAndComment, "constructor");           // Constructor marker
+defineTag(Tag.NameAndComment, "function");              // Function marker
+defineTag(Tag.NameAndComment, "method");                // Method marker
+defineTag(Tag.NameAndComment, "extends", "augments", "implements");  // Inheritance definition
+defineTag(Tag.NameAndComment, "mixin");                 // Mixin definition
 defineTag(Tag.NameAndComment, "lends");
 defineTag(Tag.TypeAndComment, "enum");
-defineTag(Tag.TypeAndComment, "this");
-defineTag(Tag.NameAndComment, "property");
-defineTag(Tag.Comment, "interface");
-defineTag(Tag.Comment, "override");
-defineTag(Tag.Comment, "static");
-defineTag(Tag.Comment, "see");
-defineTag(Tag.Comment, "public");
-defineTag(Tag.Comment, "protected");
-defineTag(Tag.Comment, "private");
-defineTag(Tag.Comment, "inner");
+defineTag(Tag.TypeAndComment, "this");                  // This type definition
+defineTag(Tag.NameAndComment, "property");              // Explicit property definition
+defineTag(Tag.Comment, "abstract", "interface");        // Abstract marker
+defineTag(Tag.Comment, "override");                     // Override marker
+defineTag(Tag.Comment, "static");                       // Explicit static marker
+defineTag(Tag.Comment, "see");                          // Reference
+defineTag(Tag.Comment, "public");                       // Public access marker
+defineTag(Tag.Comment, "protected");                    // Protected "
+defineTag(Tag.Comment, "private");                      // Private "
+defineTag(Tag.Comment, "inner");                        // Inner (exclusion) marker
 defineTag(Tag.Comment, "struct");
-defineTag(Tag.Comment, "access");
-defineTag(Tag.Comment, "abstract");
-defineTag(Tag.Comment, "const", "constant");
+defineTag(Tag.Comment, "access");                       // Access private, public, protected
+defineTag(Tag.Comment, "class");                        // Class description
 
 ///////////////////////////////////////////////// Closure Compiler /////////////////////////////////////////////////////
 

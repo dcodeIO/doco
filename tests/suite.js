@@ -10,7 +10,7 @@ module.exports = {
         'primitive': function(test) {
             var def = doco.TypeDef.interpret("{string}");
             test.strictEqual(def['remain'], '');
-            test.ok(def['type'] instanceof doco.TypeDef.NamedType);
+            test.ok(def['type'] instanceof doco.TypeDef.NamedDef);
             test.strictEqual(def['type'].maybeNull, false);
             test.strictEqual(def['type'].name, 'string');
             test.strictEqual(def['type'].optional, false);
@@ -20,7 +20,7 @@ module.exports = {
         'nonPrimitive': function(test) {
             var def = doco.TypeDef.interpret("{Array}");
             test.strictEqual(def['remain'], '');
-            test.ok(def['type'] instanceof doco.TypeDef.NamedType);
+            test.ok(def['type'] instanceof doco.TypeDef.NamedDef);
             test.strictEqual(def['type'].maybeNull, undefined);
             test.strictEqual(def['type'].name, 'Array');
             test.strictEqual(def['type'].optional, false);
@@ -44,11 +44,11 @@ module.exports = {
             var def = doco.TypeDef.interpret("{string|number} name Comment");
             test.strictEqual(def['remain'], 'name Comment');
             test.strictEqual(def['type'].optional, false);
-            test.ok(def['type'] instanceof doco.TypeDef.OrType);
+            test.ok(def['type'] instanceof doco.TypeDef.OrDef);
             test.strictEqual(def['type'].maybeNull, undefined);
-            var ts = def['type'].types;
-            test.ok(ts[0] instanceof doco.TypeDef.NamedType);
-            test.ok(ts[1] instanceof doco.TypeDef.NamedType);
+            var ts = def['type'].subTypes;
+            test.ok(ts[0] instanceof doco.TypeDef.NamedDef);
+            test.ok(ts[1] instanceof doco.TypeDef.NamedDef);
             test.strictEqual(ts[0].name, 'string');
             test.strictEqual(ts[0].maybeNull, false);
             test.strictEqual(ts[1].name, 'number');
@@ -61,11 +61,11 @@ module.exports = {
             var def = doco.TypeDef.interpret("{(string|number)} name Comment");
             test.strictEqual(def['remain'], 'name Comment');
             test.strictEqual(def['type'].optional, false);
-            test.ok(def['type'] instanceof doco.TypeDef.OrType);
+            test.ok(def['type'] instanceof doco.TypeDef.OrDef);
             test.strictEqual(def['type'].maybeNull, undefined);
-            var ts = def['type'].types;
-            test.ok(ts[0] instanceof doco.TypeDef.NamedType);
-            test.ok(ts[1] instanceof doco.TypeDef.NamedType);
+            var ts = def['type'].subTypes;
+            test.ok(ts[0] instanceof doco.TypeDef.NamedDef);
+            test.ok(ts[1] instanceof doco.TypeDef.NamedDef);
             test.strictEqual(ts[0].name, 'string');
             test.strictEqual(ts[0].maybeNull, false);
             test.strictEqual(ts[1].name, 'number');
@@ -78,7 +78,7 @@ module.exports = {
             var def = doco.TypeDef.interpret("{!Array} a");
             test.strictEqual(def['remain'], 'a');
             test.strictEqual(def['type'].optional, false);
-            test.ok(def['type'] instanceof doco.TypeDef.NamedType);
+            test.ok(def['type'] instanceof doco.TypeDef.NamedDef);
             test.strictEqual(def['type'].maybeNull, false);
             test.strictEqual(def['type'].name, 'Array');
             test.done();
@@ -88,7 +88,7 @@ module.exports = {
             var def = doco.TypeDef.interpret("{?Array} a");
             test.strictEqual(def['remain'], 'a');
             test.strictEqual(def['type'].optional, false);
-            test.ok(def['type'] instanceof doco.TypeDef.NamedType);
+            test.ok(def['type'] instanceof doco.TypeDef.NamedDef);
             test.strictEqual(def['type'].maybeNull, true);
             test.strictEqual(def['type'].name, 'Array');
             test.done();
@@ -98,8 +98,8 @@ module.exports = {
             var def = doco.TypeDef.interpret("{?function(Error, ...string):undefined=} callback");
             test.strictEqual(def['remain'], 'callback');
             test.strictEqual(def['type'].optional, true);
-            test.ok(def['type'] instanceof doco.TypeDef.FunctionType);
-            test.strictEqual(def['type'].toString(), '?function(Error, ...[string]):undefined');
+            test.ok(def['type'] instanceof doco.TypeDef.FunctionDef);
+            test.strictEqual(def['type'].toString(), '?function(Error, ...[string]):undefined=');
             test.done();
         },
         
@@ -110,13 +110,5 @@ module.exports = {
             test.strictEqual(def['type'].toString(), "("+typeDef+")");
             test.done();
         }
-    },
-    
-    "self": function(test) {
-        var source = fs.readFileSync(path.join(__dirname, '..', 'src', 'doco.js'));
-        doco(source, function(err, context) {
-            context.build();
-            test.done();
-        });
     }
 };

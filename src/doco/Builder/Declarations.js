@@ -15,22 +15,34 @@
  */
 
 /**
- * A Declaration built of variable and function definitions.
- * @name doco.Declaration
- * @param {!Array.<!doco.Declaration.Variable>} vars Variable definitions
- * @param {?doco.Declaration.Function} func Function definition
+ * @alias doco.Builder.VariableDeclaration
+ * @inner
+ */
+var VariableDeclaration = require("./VariableDeclaration.js");
+
+/**
+ * @alias doco.Builder.FunctionDeclaration
+ * @inner
+ */
+var FunctionDeclaration = require("./FunctionDeclaration.js");
+
+/**
+ * Declarations container built of multiple variable and one function declaration.
+ * @name doco.Declarations
+ * @param {!Array.<!doco.Builder.VariableDeclaration>} vars Variable definitions
+ * @param {?doco.Builder.FunctionDeclaration} func Function definition
  * @constructor
  */
-function Declaration(vars, func) {
+function Declarations(vars, func) {
 
     /**
-     * Variable definitions.
+     * Variable declarations.
      * @type {!Array.<!doco.Declaration.Variable>}
      */
     this.vars = vars;
 
     /**
-     * Function definition.
+     * Function declaration.
      * @type {?doco.Declaration.Function}
      */
     this.func = func;
@@ -39,26 +51,23 @@ function Declaration(vars, func) {
 /**
  * Interprets a Declaration.
  * @param {string} str Declaration string
- * @returns {!doco.Declaration}
+ * @returns {!doco.Declarations}
  */
-Declaration.interpret = function(str) {
+Declarations.interpret = function(str) {
     var vars = [], match;
-    while (match = Declaration.Variable.EXPRESSION.exec(str)) {
+    while (match = VariableDeclaration.EXPRESSION.exec(str)) {
         if (match[1] || match[2] !== 'function') {
-            vars.push(new Declaration.Variable(match[1] || null, match[2]));
+            vars.push(new VariableDeclaration(match[1] || null, match[2]));
         }
     }
     var func = null;
-    if (match = Declaration.Function.EXPRESSION.exec(str)) {
-        func = new Declaration.Function(
+    if (match = FunctionDeclaration.EXPRESSION.exec(str)) {
+        func = new FunctionDeclaration(
             match[1] || null,
             match[2].split(/,/).map(function(name) { return name.trim(); })
         );
     }
-    return new Declaration(vars, func);
+    return new Declarations(vars, func);
 };
 
-Declaration.Variable = require("./Declaration/Variable.js");
-Declaration.Function = require("./Declaration/Function.js");
-
-module.exports = Declaration;
+module.exports = Declarations;

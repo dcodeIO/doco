@@ -15,29 +15,21 @@
  */
 
 /**
- * @alias doco.Tag
+ * @alias doco.Reflect.Namespace
  * @inner
  */
-var Tag = require("../Tag.js");
+var Namespace = require("./Namespace.js");
 
 /**
- * Represents an Unknown Tag.
- * @name doco.Tag.Unknown
+ * A Reflect File.
+ * @param {string} name File name
  * @constructor
- * @param {string} tagName Tag name
- * @param {string} def Definition
- * @extends doco.Tag
+ * @extends doco.Reflect.Namespace
  */
-var Unknown = function UnknownTag(tagName, def) {
-    Tag.call(this, tagName);
+function File(name) {
+    Namespace.call(this, name);
+}
 
-    /**
-     * Tag definition that is unknown.
-     * @type {string}
-     */
-    this.def = def;
-};
+File.prototype = Object.create(Namespace.prototype);
 
-Unknown.prototype = Object.create(Tag.prototype);
-
-module.exports = Unknown;
+module.exports = File;

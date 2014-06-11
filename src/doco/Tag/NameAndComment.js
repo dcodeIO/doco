@@ -16,6 +16,7 @@
 
 /**
  * @alias {doco.Tag}
+ * @inner
  */
 var Tag = require("../Tag.js");
 
@@ -29,6 +30,7 @@ var Tag = require("../Tag.js");
  */
 var NameAndComment = function(tagName, def) {
     Tag.call(this, tagName);
+    def = def || "";
     var pos = def.indexOf(' ');
     if (pos >= 0) {
         this.name = def.substring(0, pos);

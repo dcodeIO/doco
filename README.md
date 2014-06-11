@@ -1,44 +1,34 @@
-![doco - The JavaScript Documentation Engine](https://raw.github.com/dcodeIO/doco/master/doco.png)
+![doco - A JavaScript Documentation Engine](https://raw.github.com/dcodeIO/doco/master/doco.png)
 ======================================
-**doco** aims to become the ideal tool for documenting JavaScript code.
+doco aims to become a reasonable documentation generator for comprehensively documented JavaScript code.
 
-Why?
-----
-You already know if you have ever used another documentation generator.
+It might be for you, if...
 
-What can doco already do?
--------------------------
-doco already is able to parse a variety of comment types to a reflected documentation context of well defined objects.
-This means that everything is composed of doco.Declaration, doco.Tag and doco.TypeDef objects that may safely be used
-to generate to-the-point documentation in all different output formats. It understands a similar syntax as JSDoc does
-but skips some constructs that tend to make things rather messy.
+* you are comfortable with documenting every single exposed variable and function, like for Closure Compiler.
+* you use GitHub a lot and would love to have some markdown documentation.
 
-Additionally, it largely borrows type annotation styles from Closure Compiler. Yes, right, that Java-beast that isn't
-really keeping with the period anymore. However, its type annotation syntax is really useful and able to pinpoint
-pretty much every awkward case. To make this actually work, doco fully understands these cases and is able to untangle
-them entirely. Additional benefit: It's compatible with existing code that already follows this convention to a
-reasonable degree.
+So, what's the current state?
+-----------------------------
+* It parses comments including the following variable or function declaration.
+* It parses Closure Compiler-like type annotations.
+* It creates a reflected tree structure of all the comments, tags and types.
+* It outputs GitHub-flavoured markdown.
+* It implements node's stream interface for interoperability.
 
-It also implements node's stream interface which ensures interoperability, allows building middleware or just using the
-raw parser for something else. You know, documenting PHP code or something.
+What does it not do (yet)?
+--------------------------
+* It's not yet able to split documentation into multiple files (like for inner classes etc.).
+* It does not try to fully understand the code (it does not recognize any scopes).
 
-Ideas
------
-* What's not documented isn't documented
-* No code analysis = no backfiring
-* Less is more
-* Y U NO MAKE A MARKDOWN GENERATOR
-
-So, what's next?
-----------------
-* Putting together the TypeDef parser and comment types
-* Resolving classes, methods and variables in a common namespace
-* Creating generators for Markdown (e.g. publish on GitHub) and HTML
-
-Until then
-----------
-* [Learn more by reading the wiki](https://github.com/dcodeIO/doco/wiki)
-* View the sources and decide if you like what's there already
+Still interested?
+-----------------
+* [See an example](https://github.com/dcodeIO/ByteBuffer.js/wiki/API)
+* [Check the wiki](https://github.com/dcodeIO/doco/wiki)
+* [Inspect the sources](https://github.com/dcodeIO/doco/tree/master/src)
+* Try it:
+  
+  `npm install -g doco`
+  `doco --gen=markdown YourClass.js > YourClass.md`
 
 License
 -------

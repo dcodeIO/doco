@@ -1,7 +1,7 @@
 {
     "name": "doco",
-    "description": "The JavaScript Documentation Engine",
-    "version": "0.2.0",
+    "description": "A JavaScript Documentation Engine",
+    "version": "0.3.0",
     "author": "Daniel Wirtz <dcode@dcode.io>",
     "main": "./src/doco.js",
     "bin": {
@@ -18,7 +18,9 @@
     "devDependencies": {
         "testjs": "latest"
     },
-    "dependencies": {},
+    "dependencies": {
+        "ascli": "latest"
+    },
     "license": "Apache-2.0",
     "engines": {
         "node": ">=0.6"

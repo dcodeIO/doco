@@ -16,11 +16,13 @@
 
 /**
  * @alias {doco.Tag}
+ * @inner
  */
 var Tag = require("../Tag.js");
 
 /**
  * @alias {doco.TypeDef}
+ * @inner
  */
 var TypeDef = require("../TypeDef.js");
 
@@ -33,9 +35,11 @@ var TypeDef = require("../TypeDef.js");
  */
 var TypeNameAndComment = function(tagName, def) {
     Tag.call(this, tagName);
-    var typeDef = TypeDef.interpret(def);
-    this.type = typeDef['type'];
-    def = typeDef['remain'];
+    var typeDef;
+    if (typeDef = TypeDef.interpret(def)) {
+        this.type = typeDef['type'];
+        def = typeDef['remain'];
+    }
     var pos = def.indexOf(' ');
     if (pos >= 0) {
         this.name = def.substring(0, pos);

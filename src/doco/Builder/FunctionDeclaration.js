@@ -15,29 +15,31 @@
  */
 
 /**
- * @alias doco.Tag
- * @inner
- */
-var Tag = require("../Tag.js");
-
-/**
- * Represents an Unknown Tag.
- * @name doco.Tag.Unknown
+ * A FunctionDeclaration.
+ * @name doco.Builder.FunctionDeclaration
  * @constructor
- * @param {string} tagName Tag name
- * @param {string} def Definition
- * @extends doco.Tag
+ * @param {?string} name Function name
+ * @param {Array.<string>} parameters Function parameter names
  */
-var Unknown = function UnknownTag(tagName, def) {
-    Tag.call(this, tagName);
+var FunctionDeclaration = function(name, parameters) {
 
     /**
-     * Tag definition that is unknown.
-     * @type {string}
+     * Function name.
+     * @type {?string}
      */
-    this.def = def;
+    this.name = name;
+
+    /**
+     * Function parameter definitions to be interpreted.
+     * @type {Array.<string>}
+     */
+    this.parameters = parameters;
 };
 
-Unknown.prototype = Object.create(Tag.prototype);
+/**
+ * Expression used to parse function definitions.
+ * @const {!RegExp}
+ */
+FunctionDeclaration.EXPRESSION = /function\s*([^\s\(]+)?\s*\(([^\)]*)\)/;
 
-module.exports = Unknown;
+module.exports = FunctionDeclaration;

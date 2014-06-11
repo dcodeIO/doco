@@ -1,5 +1,22 @@
+/*
+ Copyright 2013 Daniel Wirtz <dcode@dcode.io>
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
 /**
  * @alias doco.TypeDef
+ * @inner
  */
 var TypeDef = require("../TypeDef.js");
 
@@ -13,7 +30,7 @@ var Parser = {};
  * Parses a type definition, e.g. `{number|?(Object.<string,!Array.<{key: string, value: number}>>))`. You name it.
  * @param {string} str Definition string
  * @param {boolean=} isFunctionArgument Whether this is a function argument or not
- * @returns {!{type: !doco.Type, remain: string}}
+ * @returns {!{type: !doco.TypeDef, remain: string}}
  * @throws {Error} If the type definition cannot be parsed
  */
 Parser.parseTypeDef = function(str, isFunctionArgument) {
@@ -24,16 +41,16 @@ Parser.parseTypeDef = function(str, isFunctionArgument) {
     // It's recursive because doing this iteratively turned out to be pretty annoying at first. Should be ok for a
     // documentation generator.
 
-    // Processes a new sub-type: Sets the current type if not already set or, if set, wraps it into an OrType. Updates
+    // Processes a new sub-type: Sets the current type if not already set or, if set, wraps it into an OrDef. Updates
     // the input afterwards.
     function process(sub) {
         if (def === null) {
             def = sub['type'];
         } else {
-            if (!(def instanceof TypeDef.OrType)) {
+            if (!(def instanceof TypeDef.OrDef)) {
                 throw(new Error("Illegal continuation of non-or-type: "+str));
             }
-            def.add(sub['type']);
+            def.subTypes.push(sub['type']);
         }
         str = sub['remain'];
         maybeNull = undefined;
@@ -52,11 +69,11 @@ Parser.parseTypeDef = function(str, isFunctionArgument) {
                 str = str.substring(1).trimLeft();
                 break; // Next
             case '{':
-                process(Parser.parseObjectType(str, maybeNull));
+                process(Parser.parseObjectDef(str, maybeNull));
                 break; // Next
             case '(':
                 if (def === null) {
-                    def = new TypeDef.OrType(maybeNull);
+                    def = new TypeDef.OrDef(maybeNull);
                     str = str.substring(1).trimLeft();
                 } else {
                     process(Parser.parseTypeDef(str));
@@ -66,17 +83,17 @@ Parser.parseTypeDef = function(str, isFunctionArgument) {
                 if (def === null) {
                     throw("Illegal '|': "+str+" (type expected)");
                 }
-                if (!(def instanceof TypeDef.OrType)) { // Make it one
-                    var parent = new TypeDef.OrType(undefined);
-                    parent.add(def);
+                if (!(def instanceof TypeDef.OrDef)) { // Make it one
+                    var parent = new TypeDef.OrDef(undefined);
+                    parent.subTypes.push(def);
                     def = parent;
                 }
                 str = str.substring(1).trimLeft();
-                break; // Skip this and process the next as at this point there might be an OrType only
+                break; // Skip this and process the next as at this point there might be an OrDef only
             case '<':
                 throw(new Error("Illegal '<': "+str+" (type delimiter expected)"));
             case ')':
-                if (def instanceof TypeDef.OrType) {
+                if (def instanceof TypeDef.OrDef) {
                     str = str.substring(1).trimLeft();
                 } // fallthrough
             case '}':
@@ -97,9 +114,9 @@ Parser.parseTypeDef = function(str, isFunctionArgument) {
                 return { 'type': def, 'remain': str }; // Pass this up a level including the delimiter
             default:
                 if (/^function\b/.test(str)) {
-                    process(Parser.parseFunctionType(str, maybeNull));
+                    process(Parser.parseFunctionDef(str, maybeNull));
                 } else {
-                    process(Parser.parseNamedType(str, maybeNull));
+                    process(Parser.parseNamedDef(str, maybeNull));
                 }
                 break; // Next
         }
@@ -111,21 +128,21 @@ Parser.parseTypeDef = function(str, isFunctionArgument) {
  * Parses an object definition, e.g. `{key: string, value: !(RegExp|Object.<string,Array.<number>)>}`.
  * @param {string} str String to parse
  * @param {boolean|undefined} maybeNull Whether the type may be null or not
- * @returns {{type: !doco.TypeDef.ObjectType, remain: string}}
+ * @returns {{type: !doco.TypeDef.ObjectDef, remain: string}}
  * @throws {Error} If the type definition cannot be parsed
  */
-Parser.parseObjectType = function(str, maybeNull) {
+Parser.parseObjectDef = function(str, maybeNull) {
     // It's known to start with `{`
     str = str.substring(1).trimLeft();
 
     // Processes a sub-type / property and updates the input afterwards.
     function process(sub) {
-        def.add(name, sub['type']);
+        def.properties[name] = sub['type'];
         str = sub['remain'];
         name = '';
     }
 
-    var def = new TypeDef.ObjectType(typeof maybeNull === 'undefined' ? true : maybeNull),
+    var def = new TypeDef.ObjectDef(typeof maybeNull === 'undefined' ? true : maybeNull),
         name = '';
     while (str.length > 0) {
         switch(str.charAt(0)) {
@@ -174,11 +191,11 @@ Parser.parseObjectType = function(str, maybeNull) {
  * Parses a single named type definition, e.g. `!Object.<number,string>`.
  * @param {string} str String to parse
  * @param {boolean|undefined} maybeNull Whether the type may be null or not
- * @returns {{type: !doco.TypeDef.NamedType, remain: string}}
+ * @returns {{type: !doco.TypeDef.NamedDef, remain: string}}
  * @throws {Error} If the type definition cannot be parsed
  */
-Parser.parseNamedType = function(str, maybeNull) {
-    var def = new TypeDef.NamedType(maybeNull),
+Parser.parseNamedDef = function(str, maybeNull) {
+    var def = new TypeDef.NamedDef(maybeNull),
         name = '';
 
     var i=0;
@@ -192,12 +209,12 @@ Parser.parseNamedType = function(str, maybeNull) {
                     name = name.substring(0, name.length-1);
                 }
                 def.name = name;
-                var sub = Parser.parseGenericTypes(str.substring(i));
+                var sub = Parser.parseGenerics(str.substring(i));
                 if (typeof def.maybeNull === 'undefined') {
                     if (def.name === 'null') { // Normalized later
                         def.maybeNull = true;
                     } else {
-                        if (TypeDef.PrimitiveTypes.indexOf(def.name) >= 0) {
+                        if (TypeDef.PRIMITIVE_TYPES.indexOf(def.name) >= 0) {
                             def.maybeNull = false;
                         }
                     }
@@ -225,7 +242,7 @@ Parser.parseNamedType = function(str, maybeNull) {
                     if (def.name === 'null') { // Normalized later
                         def.maybeNull = true;
                     } else {
-                        if (TypeDef.PrimitiveTypes.indexOf(def.name) >= 0) {
+                        if (TypeDef.PRIMITIVE_TYPES.indexOf(def.name) >= 0) {
                             def.maybeNull = false;
                         }
                     }
@@ -245,10 +262,10 @@ Parser.parseNamedType = function(str, maybeNull) {
  * Parsesa a function type definition, e.g. `function(new: MyClass, string, ...[number])`.
  * @param {string} str String to parse
  * @param {boolean|undefined} maybeNull Whether this type may become null or not
- * @returns {{type: !doco.TypeDef.FunctionType, remain: string}}
+ * @returns {{type: !doco.TypeDef.FunctionDef, remain: string}}
  * @throws (Error} If the types cannot be parsed
  */
-Parser.parseFunctionType = function(str, maybeNull) {
+Parser.parseFunctionDef = function(str, maybeNull) {
     // It's known to start with `function` before a word boundary
     str = str.substring(8).trimLeft();
     // Parses the next function argument
@@ -280,15 +297,15 @@ Parser.parseFunctionType = function(str, maybeNull) {
                 str = sub['remain'];
             }
             sub['type'].varargs = true;
-            def.add(sub['type']);
+            def.subTypes.push(sub['type']);
         } else {
             sub = Parser.parseTypeDef(str, true);
-            def.add(sub['type']);
+            def.subTypes.push(sub['type']);
             str = sub['remain'];
         }
     }
 
-    var def = new TypeDef.FunctionType(maybeNull);
+    var def = new TypeDef.FunctionDef(maybeNull);
     while (str.length > 0) {
         switch (str.charAt(0)) {
             case '(':
@@ -321,7 +338,7 @@ Parser.parseFunctionType = function(str, maybeNull) {
                     'remain': str
                 };
             case ',':
-                if (def.types.length > 0) {
+                if (def.subTypes.length > 0 || def.new || def.returns) {
                     str = str.substring(1).trimLeft();
                     parse();
                     break; // Next
@@ -334,14 +351,14 @@ Parser.parseFunctionType = function(str, maybeNull) {
 };
 
 /**
- * Parses an generic type definition, e.g. `.<number,string>`
+ * Parses type generics, e.g. `.<number,string>`
  * @param {string} str String to parse
  * @returns {{types: !Array.<!doco.TypeDef.Type>, remain: string}}
  * @throws {Error} If the types cannot be parsed
  */
-Parser.parseGenericTypes = function(str) {
+Parser.parseGenerics = function(str) {
     // It's known to start with `.<` but only the `<` is given
-    /** @type {!Array.<doco.Types>} */
+    /** @type {!Array.<!doco.TypeDef>} */
     var types = [];
     str = str.substring(1).trimLeft();
     while (str.length > 0) {

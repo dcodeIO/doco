@@ -15,29 +15,12 @@
  */
 
 /**
- * @alias doco.Tag
- * @inner
+ * doco externs generator.
+ * @param {!doco.Builder} builder
+ * @returns {!Buffer} Externs
  */
-var Tag = require("../Tag.js");
+function docoExterns(builder) {
+    throw(new Error("Not yet implemented."));
+}
 
-/**
- * Represents an Unknown Tag.
- * @name doco.Tag.Unknown
- * @constructor
- * @param {string} tagName Tag name
- * @param {string} def Definition
- * @extends doco.Tag
- */
-var Unknown = function UnknownTag(tagName, def) {
-    Tag.call(this, tagName);
-
-    /**
-     * Tag definition that is unknown.
-     * @type {string}
-     */
-    this.def = def;
-};
-
-Unknown.prototype = Object.create(Tag.prototype);
-
-module.exports = Unknown;
+module.exports = docoExterns;

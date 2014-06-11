@@ -24,29 +24,29 @@ var util = require("util");
 /**
  * doco namespace and convenience parser.
  * @param {string} source Source to parse
- * @param {function(Error, doco.Context=)} callback Callback receiving the parsed and interpreted context
+ * @param {function(Error, doco.Builder=)} callback Callback receiving the Builder
  */
-var doco = function(source, callback) {
+function doco(source, callback) {
     var parser = new doco.Parser(),
-        context = new doco.Context();
+        builder = new doco.Builder();
     parser.on("comment", function(comment, decl) {
-        context.interpret(comment, decl);
+        builder.interpret(comment, decl);
     });
     parser.on("error", function(err) {
         callback(err);
     });
     parser.on("finish", function() {
-        callback(null, context);
+        callback(null, builder);
     });
     parser.write(source);
     parser.end();
-};
+}
 
 doco.Parser      = require("./doco/Parser.js");
-doco.Context     = require("./doco/Context.js");
-doco.Declaration = require("./doco/Declaration.js");
 doco.Tag         = require("./doco/Tag.js");
 doco.TypeDef     = require("./doco/TypeDef.js");
+doco.Reflect     = require("./doco/Reflect.js");
+doco.Builder     = require("./doco/Builder.js");
 
 /**
  * Inspects an object including all its private members.

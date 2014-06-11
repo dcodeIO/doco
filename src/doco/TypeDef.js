@@ -16,15 +16,51 @@
 
 /**
  * @alias doco
+ * @inner
  */
 var doco = require("../doco.js");
 
 /**
- * TypeDef interpreter.
- * @name doco.TypeDef
- * @type {Object.<string,*>}
+ * TypeDef base type holding the TypeDef namespace.
+ * @name doco.TypeDef.Type
+ * @param {boolean|undefined} maybeNull Whether the type may be null or not. May be explicitly `undefined`.
+ * @constructor
+ * @abstract
  */
-var TypeDef = {};
+function TypeDef(maybeNull) {
+
+    /**
+     * Whether this Type may become null.
+     * @type {boolean|undefined}
+     */
+    this.maybeNull = maybeNull;
+
+    /**
+     * Whether this is a type of variable arguments. Used in function arguments only.
+     * @type {boolean}
+     */
+    this.varargs = false;
+
+    /**
+     * Whether this Type is optional. Used in function arguments only.
+     * @type {boolean|undefined}
+     */
+    this.optional = undefined;
+
+    /**
+     * Whether this Type is omittable. Used in function arguments only.
+     * @type {boolean|undefined}
+     */
+    this.omittable = undefined;
+
+    /**
+     * Contained types. Used in function and object definitions only.
+     * @type {!Array.<!doco.TypeDef>}
+     */
+    this.subTypes = [];
+}
+
+module.exports = TypeDef; // Must be known here for cyclic dependencies
 
 //////////////////////////////////////////////////////// Types /////////////////////////////////////////////////////////
     
@@ -33,19 +69,12 @@ var TypeDef = {};
  * @type {!Array.<string>}
  * @const
  */
-TypeDef.PrimitiveTypes = ["number", "string", "boolean", "undefined"]; // "function" is special
+TypeDef.PRIMITIVE_TYPES = ["number", "string", "boolean", "undefined"]; // "function" is special
 
-module.exports = TypeDef; // Must be known here for cyclic dependencies
-
-// Abstract
-TypeDef.Type         = require("./TypeDef/Type.js");
-TypeDef.MultiType    = require("./TypeDef/MultiType.js");
-
-// Non-abstract
-TypeDef.OrType       = require("./TypeDef/OrType.js");
-TypeDef.NamedType    = require("./TypeDef/NamedType.js");
-TypeDef.ObjectType   = require("./TypeDef/ObjectType.js");
-TypeDef.FunctionType = require("./TypeDef/FunctionType.js");
+TypeDef.OrDef       = require("./TypeDef/OrDef.js");
+TypeDef.NamedDef    = require("./TypeDef/NamedDef.js");
+TypeDef.ObjectDef   = require("./TypeDef/ObjectDef.js");
+TypeDef.FunctionDef = require("./TypeDef/FunctionDef.js");
 
 /////////////////////////////////////////////////////// Parser /////////////////////////////////////////////////////////
 
@@ -60,6 +89,7 @@ TypeDef.Parser = require("./TypeDef/Parser.js");
  * @throws {Error} If there is none or an invalid type definition
  */
 TypeDef.interpret = function(str) {
+    if (str === null || str === "") return null;
     str = str.trim();
     if (str.length == 0 || str.charAt(0) != '{') {
         return {
@@ -93,17 +123,17 @@ TypeDef.interpret = function(str) {
  * @return {!doco.TypeDef.Type} Normalized type that might no longer be an OrType if unwrapped
  * @inner
  */
-function normalizeOrType(def) {
-    if (def instanceof TypeDef.OrType) { // Normalize all sub-OrTypes
-        for (var i=0; i<def.types.length; i++) {
-            if (def.types[i] instanceof TypeDef.OrType) {
-                def.types[i] = normalizeOrType(def.types[i]);
+function normalizeOrDef(def) {
+    if (def instanceof TypeDef.OrDef) { // Normalize all sub-OrTypes
+        for (var i=0; i<def.subTypes.length; i++) {
+            if (def.subTypes[i] instanceof TypeDef.OrDef) {
+                def.subTypes[i] = normalizeOrDef(def.subTypes[i]);
             }
         }
     }
     // Maybe unwrap
-    while (def instanceof TypeDef.OrType && def.types.length == 1) {
-        def = def.types[0];
+    while (def instanceof TypeDef.OrDef && def.subTypes.length == 1) {
+        def = def.subTypes[0];
     }
     return def;
 }
@@ -116,8 +146,8 @@ function normalizeOrType(def) {
  * @inner
  */
 function normalizeTypeDef(def) {
-    if (def instanceof TypeDef.OrType) {
-        def = normalizeOrType(def);
+    if (def instanceof TypeDef.OrDef) {
+        def = normalizeOrDef(def);
     }
     return def;
 }

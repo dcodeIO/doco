@@ -14,6 +14,9 @@
  limitations under the License.
  */
 
+/**
+ * @inner
+ */
 var stream = require("stream");
 
 /**
@@ -194,7 +197,7 @@ Parser.prototype._processComment = function(start, end) {
 Parser.prototype._processDeclaration = function(start, end) {
     var decl = this.buffer.toString("utf8", start, end);
     this.emit("comment",
-        this.comment.replace(/(?:^|\s+)\*+\s*/g, '\n').trim(),
+        this.comment.replace(/^\s*\*+\s*/mg, '\n').trim(),
         decl.replace(/\s+/g, ' ').trim()
     );
     this.comment = null;

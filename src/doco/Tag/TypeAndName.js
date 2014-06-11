@@ -16,11 +16,13 @@
 
 /**
  * @alias doco.Tag
+ * @inner
  */
 var Tag = require("../Tag.js");
 
 /**
  * @alias doco.TypeDef
+ * @inner
  */
 var TypeDef = require("../TypeDef.js");
 
@@ -34,9 +36,13 @@ var TypeDef = require("../TypeDef.js");
  */
 var TypeAndName = function(tagName, def) {
     Tag.call(this, tagName);
-    var typeDef = TypeDef.interpret(def);
-    this.type = typeDef['type'];
-    this.name = typeDef['remain'];
+    var typeDef;
+    if (typeDef = TypeDef.interpret(def)) {
+        this.type = typeDef['type'];
+        this.name = typeDef['remain'];
+    } else {
+        this.name = def;
+    }
 };
 
 TypeAndName.prototype = Object.create(Tag.prototype);

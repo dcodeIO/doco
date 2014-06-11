@@ -1,0 +1,30 @@
+#!/usr/env/node
+
+var path = require("path"),
+    fs = require("fs"),
+    ascli = require("ascli"),
+    doco = require("../src/doco.js"),
+    app = ascli.app("doco"),
+    opt = ascli.opt,
+    argv = ascli.argv,
+    pkg = require("../package.json");
+
+
+if (argv.length < 1) {
+    ascli.banner("doco".green.bold, pkg.version);
+    process.stderr.write("Usage:".white.bold+" doco [-gen=GENERATOR] sourceFile sourceFile ... [ > outFile ]\n");
+    process.exit(-1);
+}
+
+var sourceFile = argv[0],
+    generator = opt["gen"] || "markdown";
+
+doco(fs.readFileSync(sourceFile), function(err, builder) {
+    if (err) {
+        throw(err);
+    }
+    builder.build();
+    var out = require("../generators/"+generator+".js")(builder);
+    process.stdout.write(out);
+    app.ok(generator+", "+out.length+" bytes");
+});

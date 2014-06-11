@@ -16,6 +16,7 @@
 
 /**
  * @alias doco.Tag
+ * @inner
  */
 var Tag = require("../Tag.js");
 
@@ -38,5 +39,14 @@ var Comment = function Comment(tagName, def) {
 };
 
 Comment.prototype = Object.create(Tag.prototype);
+
+/**
+ * Returns a string representation of this Tag.
+ * @param {boolean=} noComment Whether to exclude the comment or not, defaults to `false`
+ * @returns {string}
+ */
+Comment.prototype.toString = function(noComment) {
+    return "@"+this.tagName+(noComment ? "" : " "+this.comment);
+};
 
 module.exports = Comment;

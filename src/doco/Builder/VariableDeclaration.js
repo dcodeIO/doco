@@ -15,12 +15,13 @@
  */
 
 /**
- * A Variable Declaration.
+ * A VariableDeclaration.
+ * @name doco.Builder.VariableDeclaration
  * @constructor
  * @param {string} type Variable type, e.g. `var` or `let`
  * @param {string} name Variable name
  */
-var Variable = function(type, name) {
+var VariableDeclaration = function(type, name) {
 
     /**
      * Variable type, e.g. `var` or `let`.
@@ -36,10 +37,10 @@ var Variable = function(type, name) {
 };
 
 /**
- * Returns a string representation of this Variable.
+ * Returns a string representation of this declaration.
  * @returns {string} `variableType variableName`
  */
-Variable.prototype.toString = function() {
+VariableDeclaration.prototype.toString = function() {
     return this.type+" "+this.name;
 };
 
@@ -47,6 +48,6 @@ Variable.prototype.toString = function() {
  * Expression used to parse variable definitions.
  * @const {!RegExp}
  */
-Variable.EXPRESSION = /^(?:(var|let)\s)?\s*([^=;\s]+)\s*(?:=|;|\s)/g;
+VariableDeclaration.EXPRESSION = /^(?:(var|let)\s)?\s*([^=;\s]+)\s*(?:=|;|\s)/g;
 
-module.exports = Variable;
+module.exports = VariableDeclaration;
