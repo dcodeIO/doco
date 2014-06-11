@@ -27,7 +27,7 @@ Still interested?
 * [Inspect the sources](https://github.com/dcodeIO/doco/tree/master/src)
 * Try it:
   
-  `npm install -g doco`
+  `npm install -g doco`  
   `doco --gen=markdown YourClass.js > YourClass.md`
 
 License
