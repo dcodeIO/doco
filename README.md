@@ -1,6 +1,6 @@
 ![doco - A JavaScript Documentation Engine](https://raw.github.com/dcodeIO/doco/master/doco.png)
 ======================================
-doco aims to become a reasonable documentation generator for comprehensively documented JavaScript code.
+**doco** aims to become a reasonable documentation generator for comprehensively documented JavaScript code.
 
 It might be for you, if...
 
